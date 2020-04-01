@@ -5,14 +5,14 @@
 
 ;; -------------------------
 ;; Views
+(def click-count (r/atom 5))
 
 (defn main-header [name]
   [:div
-   [:p "Hello, " name]])
-
+   [:p "Hello, " name "the click count is " @click-count ]])
 
 (defn click-handler []
-  (js/console.log "Hello"))
+  (swap! click-count inc))
 
 (defn home-page []
   [:div [:h2 "Welcome to Reagent"]
