@@ -6,15 +6,18 @@
 ;; -------------------------
 ;; Views
 
-(defn main-header []
+(defn main-header [name]
   [:div
-   [:p "I include simple-component."]
-   ])
+   [:p "Hello, " name]])
+
+
+(defn click-handler []
+  (js/console.log "Hello"))
 
 (defn home-page []
   [:div [:h2 "Welcome to Reagent"]
-   [main-header]
-   ])
+   [main-header "Sotiris"]
+    [:input {:type "button" :value "Click" :on-click  click-handler }]])
 
 ;; -------------------------
 ;; Initialize app
