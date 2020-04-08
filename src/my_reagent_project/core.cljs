@@ -1,40 +1,42 @@
 (ns my-reagent-project.core
+    (:require-macros [cljs.core.async.macros :refer [go]])
     (:require
       [reagent.core :as r]
       [reagent.dom :as d]
-      [ajax.core :refer [GET]]))
+      [cljs-http.client :as http]
+      [cljs.core.async :refer [<!]]
+))
 
 ;; -------------------------
 ;; Views
-(def click-count (r/atom 5))
 (def posts (r/atom []))
-
-(defn main-header [name]
-  [:div
-   [:p "Hello, " name "the click count is " @click-count ]])
-
-(defn click-handler []
-  (swap! click-count inc))
 
 (defn render-posts []
   [:div
    "The posts are ", (str @posts)])
 
 (defn postHandler [res]
-   (reset! posts (js->clj res)
+   (reset! posts (js->clj ( res))
+ ))
 
 
-     ))
-
-(GET "https://jsonplaceholder.typicode.com/posts" :handler postHandler)
+(defn main-header [name click-count]
+  (letfn [(click-handlerin [] (swap! click-count inc))]
+    [:div
+     [:input {:type "button" :value "Click" :on-click click-handlerin}]
+     [:p "Hello, " name " the click count is " @click-count ]])
+  )
 
 (defn home-page []
-  [:div [:h2 "Welcome to Reagent"]
-   [main-header "Sotiris"]
-    [:input {:type "button" :value "Click" :on-click  click-handler }]
-    [render-posts posts]
-   ])
+  (let [click-count (r/atom 5 )]
+    [:div [:h2 "Welcome to Reagent"]
+     [main-header "Sotiris" click-count]
+     [render-posts posts]]))
 
+;(GET "https://jsonplaceholder.typicode.com/posts" :handler postHandler :response-format {:content-type "json"})
+(go (let [response (<! (http/get "https://jsonplaceholder.typicode.com/posts"))]
+      (prn (:status response))
+      (reset! posts (map :title (:body response)))))
 ;; -------------------------
 ;; Initialize app
 
