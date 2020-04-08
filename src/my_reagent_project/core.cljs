@@ -5,6 +5,7 @@
       [reagent.dom :as d]
       [cljs-http.client :as http]
       [cljs.core.async :refer [<!]]
+      [my-reagent-project.main_header :as header]
 ))
 
 ;; -------------------------
@@ -19,18 +20,10 @@
    (reset! posts (js->clj ( res))
  ))
 
-
-(defn main-header [name click-count]
-  (letfn [(click-handlerin [] (swap! click-count inc))]
-    [:div
-     [:input {:type "button" :value "Click" :on-click click-handlerin}]
-     [:p "Hello, " name " the click count is " @click-count ]])
-  )
-
 (defn home-page []
   (let [click-count (r/atom 5 )]
     [:div [:h2 "Welcome to Reagent"]
-     [main-header "Sotiris" click-count]
+     [header/header "Sotiris" click-count]
      [render-posts posts]]))
 
 ;(GET "https://jsonplaceholder.typicode.com/posts" :handler postHandler :response-format {:content-type "json"})
