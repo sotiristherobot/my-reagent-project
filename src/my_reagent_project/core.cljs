@@ -10,29 +10,22 @@
 
 ;; -------------------------
 ;; Views
-(def posts (r/atom []))
-
-(defn render-posts []
-  [:div
-   "The posts are ", (str @posts)])
-
-(defn postHandler [res]
-   (reset! posts (js->clj ( res))
- ))
+(defn render-posts [posts]
+    [:div
+     "The posts are ", (str @posts)])
 
 (defn home-page []
-  (let [click-count (r/atom 5 )]
-    [:div [:h2 "Welcome to Reagent"]
+  (let [click-count (r/atom 0)
+        posts (r/atom ["loading..."])]
+    (go (let [response (<! (http/get "https://jsonplaceholder.typicode.com/posts"))]
+          ;; (prn (:status response))
+          (reset! posts (map :title (:body response)))))
+    [:div [:h2 "Welcome to my homepage"]
      [header/header "Sotiris" click-count]
      [render-posts posts]]))
 
-;(GET "https://jsonplaceholder.typicode.com/posts" :handler postHandler :response-format {:content-type "json"})
-(go (let [response (<! (http/get "https://jsonplaceholder.typicode.com/posts"))]
-      (prn (:status response))
-      (reset! posts (map :title (:body response)))))
 ;; -------------------------
 ;; Initialize app
-
 (defn mount-root []
   (d/render [home-page] (.getElementById js/document "app")))
 
