@@ -28,6 +28,7 @@
     <orderEntry type="library" name="Leiningen: cljsjs/react:16.13.0-0" level="project" />
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.5" level="project" />
     <orderEntry type="library" name="Leiningen: co.deps/ring-etag-middleware:0.2.0" level="project" />
+    <orderEntry type="library" name="Leiningen: com.cemerick/clojurescript.test:0.2.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-clj:0.8.309" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-cljs:0.8.256" level="project" />
     <orderEntry type="library" name="Leiningen: com.cognitect/transit-java:0.8.332" level="project" />
@@ -87,6 +88,7 @@
     <orderEntry type="library" name="Leiningen: ring-cors:0.1.12" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-codec:1.0.1" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-core:1.6.3" level="project" />
+    <orderEntry type="library" name="Leiningen: secretary:1.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: simple-lein-profile-merge:0.1.4" level="project" />
     <orderEntry type="library" name="Leiningen: strictly-specking-standalone:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: suspendable:0.1.1" level="project" />
