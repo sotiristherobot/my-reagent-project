@@ -8,27 +8,14 @@
     [cljs.core.async :refer [<!]]
     [my-reagent-project.main_header :as header]
     [clojure.string :as str]
-    [secretary.core :as secretary]
-    [goog.events :as events]
-    [goog.history.EventType :as EventType]
+    [reitit.frontend :as rf]
+    [reitit.frontend.easy :as rfe]
+    [reitit.frontend.controllers :as rfc]
+    [fipp.edn :as fedn]
+    [reitit.coercion.spec :as rss]
     ))
 
-(def app-state (r/atom {}))
-
-(defn hook-browser-navigation! []
-  (doto (Html5History.)
-    (events/listen
-      EventType/NAVIGATE
-      (fn [event]
-        (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
-
-(defn app-routes []
-  (secretary/set-config! :prefix "#")
-  (secretary/defroute "/" [] (swap! app-state assoc :page :home))
-  (secretary/defroute "/about" [] (swap! app-state assoc :page :about))
-
-  (hook-browser-navigation!))
+(defonce match (r/atom nil))
 
 ;; -------------------------
 ;; Views
@@ -50,27 +37,37 @@
      [header/header "Sotiris" click-count]
      [render-posts posts]]))
 
+(defn current-page []
+  [:div
+   [:ul
+    [:li [:a {:href (rfe/href ::home-page)} "Frontpage"]]
+    [:li [:a {:href (rfe/href ::about-page)} "About"]]
+    ]
+   (if @match
+     (let [view (:view (:data @match))]
+       [view @match]))
+   [:pre (with-out-str (fedn/pprint @match))]])
+
 ;; Routes
 (defn about-page []
-  [:div [:h1 "About Page"]
-   [:a {:href "#/about"} "about page"]])
-
-
-
-(defmulti current-page #(@app-state :page))
-(defmethod current-page :home []
-  [home-page])
-(defmethod current-page :about []
-  [about-page])
-(defmethod current-page :default []
-  [:div [:h1 "Page not found"]])
-
+  [:div [:h1 "About Page"]])
 
 ;; -------------------------
 ;; Initialize app
-(defn mount-root []
-  (app-routes)
-  (d/render [current-page] (.getElementById js/document "app")))
+(def routes
+  [["/"
+    {:name ::home-page
+     :view home-page}]
+
+   ["/about"
+    {:name ::about-page
+     :view about-page}]])
 
 (defn init! []
-  (mount-root))
+  (rfe/start!
+    (rf/router routes {:data {:coercion rss/coercion}})
+    (fn [m] (reset! match m))
+    ;; set to false to enable HistoryAPI
+    {:use-fragment false})
+  (d/render [current-page] (.getElementById js/document "app")))
+(init!)
